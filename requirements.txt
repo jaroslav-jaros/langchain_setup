@@ -1,0 +1,12 @@
+beautifulsoup4==4.12.3
+langchain==0.3.7
+langchain-community==0.3.5
+langchain-huggingface==0.1.2
+langchain-ollama==0.2.0
+langchain-milvus==0.1.7
+numpy==1.26.4
+pandas==2.2.3
+pymilvus==2.4.9
+python-dotenv==1.0.1
+sentence-transformers==3.2.1
+torch==2.5.1

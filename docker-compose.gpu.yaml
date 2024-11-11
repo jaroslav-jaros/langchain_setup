@@ -1,0 +1,7 @@
+services:
+  ollama:
+    gpus: "all"
+
+  open-webui:
+    gpus: "all"
+
