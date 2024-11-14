@@ -10,8 +10,7 @@ import os
 
 USER_AGENT = os.getenv('USER_AGENT')
 EMBEDDING_MODEL_NAME = os.getenv('EMBEDDING_MODEL_NAME')
-HOST = 'localhost'
-PORT = 19530
+MILVUS_URI = "http://localhost:19530"
 COLLECTION_NAME = 'milvus_docs_collection'
 
 
@@ -52,19 +51,7 @@ text_splitter = RecursiveCharacterTextSplitter(chunk_size=1024, chunk_overlap=0)
 all_splits = text_splitter.split_documents(docs)
 
 embeddings = HuggingFaceEmbeddings(model_name=EMBEDDING_MODEL_NAME)
-connection_args = {'host': HOST, 'port': PORT}
-
-# vector_store = Milvus(
-#     embedding_function=embeddings,
-#     connection_args=connection_args,
-#     collection_name=COLLECTION_NAME,
-#     drop_old=True,
-# ).from_documents(
-#     all_splits,
-#     embedding=embeddings,
-#     collection_name=COLLECTION_NAME,
-#     connection_args=connection_args,
-# )
+connection_args = {"uri": MILVUS_URI}
 
 vector_store = Milvus.from_documents(
     documents=all_splits,

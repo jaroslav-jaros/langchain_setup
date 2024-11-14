@@ -1,0 +1,16 @@
+models:
+  - name: "LangChain Model"
+    backend: "custom_api"
+    api_base_url: "http://langchain:8009"
+    api_endpoint: "/chat"
+    method: "POST"
+    headers:
+      Content-Type: "application/json"
+    request_template:
+      user_id: "{user_id}"
+      message: "{input}"
+    response_path: "response"
+#    response_template:
+#      user_id: "{user_id}"
+#      message: "{response}"
+#    response_type: "json"

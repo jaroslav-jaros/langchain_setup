@@ -13,8 +13,7 @@ EMBEDDING_MODEL_NAME = os.getenv('EMBEDDING_MODEL_NAME')
 LLM_MODEL_NAME = os.getenv('LLM_MODEL_NAME')
 
 embeddings = HuggingFaceEmbeddings(model_name=EMBEDDING_MODEL_NAME)
-
-connection_args = {'host': 'localhost', 'port': '19530'}
+connection_args = {"uri": "http://milvus:19530"}
 
 COLLECTION_NAME = 'milvus_docs_collection'
 

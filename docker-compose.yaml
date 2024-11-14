@@ -8,12 +8,10 @@ services:
       - my_network
     ports:
       - "11434:11434"
-    # gpus: ${OLLAMA_USE_GPU}
     
   open-webui:
     image: ghcr.io/open-webui/open-webui:ollama
     container_name: open-webui
-    restart: always
     ports:
       - "3000:8080"
     volumes:
@@ -21,21 +19,18 @@ services:
       - ${DOCKER_VOLUME_DIRECTORY:-.}/open-webui:/app/backend/data
     networks:
       - my_network
-    # GPU support: uses the OLLAMA_USE_GPU variable from .env
-    # gpus: ${OLLAMA_USE_GPU}      
 
-  langflow:
-    image: langflowai/langflow:latest
-    container_name: langflow
+  open-webui2:
+    image: ghcr.io/open-webui/open-webui:main
+    container_name: open-webui2
+    ports:
+      - "3003:8080"
+    volumes:
+      - ${DOCKER_VOLUME_DIRECTORY:-.}/open-webui2:/app/backend/data
+      - ./config.yaml:/app/backend/settings/config.yaml
     networks:
       - my_network
-    ports:
-      - "7860:7860"
-    environment:
-      - OLLAMA_API_BASE_URL=http://ollama-proxy/api/
-    volumes:
-      - ${DOCKER_VOLUME_DIRECTORY:-.}/langflow-data:/var/lib/langflow 
-      
+
   etcd:
     container_name: milvus-etcd
     image: quay.io/coreos/etcd:v3.5.5
@@ -75,8 +70,8 @@ services:
       timeout: 20s
       retries: 3
 
-  standalone:
-    container_name: milvus-standalone
+  milvus:
+    container_name: milvus
     image: milvusdb/milvus:v2.4.14
     command: ["milvus", "run", "standalone"]
     security_opt:
@@ -107,12 +102,29 @@ services:
     networks:
       - my_network
     environment:
-      MILVUS_URL: milvus-standalone:19530
+      MILVUS_URL: milvus:19530
     ports:
       - "8000:3000"
     depends_on:
-      - "standalone"      
+      - "milvus"
+
+  langchain:
+    build:
+      context: .
+      dockerfile: Dockerfile.app
+    image: local/langchain:v0.2
+    container_name: langchain
+    networks:
+      - my_network
+    ports:
+      - "8009:8000"
+    depends_on:
+      - ollama
+      - milvus
+    environment:
+      - MILVUS_URI=http://milvus:19530
+      - EMBEDDING_MODEL_NAME=${EMBEDDING_MODEL_NAME}
+      - LLM_MODEL_NAME=${LLM_MODEL_NAME}
 
 networks:
   my_network:
-
